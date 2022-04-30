@@ -1,0 +1,17 @@
+
+I = (imread('cameraman.png'));
+figure; imshow(I);
+I=im2double(I);
+[row, col] = size(I);
+K = zeros(row, col);
+a=5;
+for i = 1:row
+   for j = 1:col
+          K(i,j) = (exp(I(i,j))^(1/a))-1; 
+    end
+ end
+ figure; imshow(K);
+ figure;
+ plot(I,K,'.r');
+ figure;
+ imhist(I);

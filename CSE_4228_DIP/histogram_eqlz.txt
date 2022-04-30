@@ -1,0 +1,46 @@
+I=imread("cameraman.png");
+J = I;
+%%L = 2 ^ (floor(log2(double(B))) + 1);%%
+[rows,colm]=size(I);
+[pixelCounts, gray_value]=imhist(I);
+
+total_pixel= rows * colm;
+prob=pixelCounts(:)/(total_pixel);
+
+cdf=zeros(256,1);
+cdf(1)=prob(1);
+
+for i = 2:256
+    cdf(i)=cdf(i-1)+prob(i);
+end
+cdf=round(cdf*255);
+hist=imhist(I);
+
+
+for i = 1 : rows
+    for j = 1 : colm
+        if(I(i,j)== 0)
+            J(i, j) = cdf(I(i, j))+1;
+        else  
+            J(i, j) = cdf(I(i, j));
+
+        end
+    end
+end
+
+
+figure();
+subplot(2,2,1);
+imshow(I);
+title("Raw Image");
+subplot(2,2,2);
+imshow(J);
+title("Modified Image");
+
+figure();
+subplot(2,2,1);
+bar(hist);
+title("Prev Histogram");
+subplot(2,2,2);
+bar(cdf);
+title("Modifed Histogram");

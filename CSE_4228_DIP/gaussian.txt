@@ -1,0 +1,54 @@
+prompt = 'Enter the value of sigma: ';
+sigma = input(prompt);
+Roll=115;
+Size= [3 5 7 11];
+
+
+value= mod(Roll,4);
+KS=Size(value+1);
+
+I = imread('cat.gif');
+
+[row,col] = size(I);
+
+X = zeros(KS, KS);
+
+
+for i=1:KS
+    value=-floor(KS/2);
+    for j=1:KS
+        X(i,j) = value;
+        value = value+1;
+    end
+end
+
+Y=transpose(X);
+
+temp1=1/(2*pi*(sigma^2));
+temp2=(-((X.^2)+(Y.^2))/(2*(sigma^2)));
+gauss=temp1*exp(temp2);
+
+K=uint8(zeros(row + KS - 1, col + KS - 1));
+[rrow,rcol] = size(K);
+
+K(floor(KS/2)+1:row+floor(KS/2), floor(KS/2)+1: col+floor(KS/2)) = I;
+
+Output = K;
+K = double(K);
+
+for i = 1:rrow-KS+1
+   for j = 1:rcol-KS+1
+      N = K(i:i+KS-1, j:j+KS-1);
+      t = sum(sum(N.*gauss));
+      Output(i+floor(KS/2),j+floor(KS/2)) = t;
+   end
+end
+
+% showing input and output image
+subplot(1,2,1);
+imshow(I);
+title('Input Image');
+
+subplot(1,2,2);
+imshow(Output);
+title('Output Image');

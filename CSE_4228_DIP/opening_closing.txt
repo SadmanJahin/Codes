@@ -1,0 +1,25 @@
+function [mainImage, binaryImage, palm, fingerNoisey, fingerNoiseyReduced, labelValue, labelTextImage] = getFinger(imagePath)
+    mainImage = imread(imagePath);
+    mainImage2Gray = rgb2gray(mainImage);
+    binaryImage = imbinarize(mainImage2Gray);
+    
+    struc_element = strel('disk', 30,8);
+    binaryImage_se_erosion = imerode(binaryImage, struc_element);
+   
+    binaryImage_se_dilation = imdilate(binaryImage_se_erosion, struc_element);
+    palm = binaryImage_se_dilation;
+    binaryImage_diff = binaryImage - palm;
+    fingerNoisey = binaryImage_diff;
+    
+    remove_noise = imfill(fingerNoisey,'holes');
+    remove_noise = bwareaopen(remove_noise,4620);
+    
+    [img, label]=bwlabel(remove_noise);
+  
+    fingerNoiseyReduced = img;
+    labelValue = label;
+    
+    temp = zeros(680, 742);
+    temp(:, :) = 255;
+    labelTextImage = insertText(temp, [300 250], num2str(labelValue), 'FontSize', 100);
+end
